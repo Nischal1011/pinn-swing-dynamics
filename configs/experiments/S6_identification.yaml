@@ -1,0 +1,8 @@
+# H4: PINN vs two-stage for (m, d) under noise. 10 pairs x 2 methods x 4 noise x 3 seeds = 240 runs
+name: S6_identification
+script: identification
+grid:
+  pair: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  method: [pinn, two_stage]
+  noise: [0.0, 0.05, 0.15, 0.30]
+seeds: [0, 1, 2]

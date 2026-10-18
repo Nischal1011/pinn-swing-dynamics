@@ -1,0 +1,9 @@
+# H1, H2: data size x noise, PINN vs data-only, boundary sampling (authors' regime). 4 x 4 x 2 x 10 = 320 runs
+name: S1_size_noise_boundary
+script: forward
+fixed: {regime: boundary}
+grid:
+  N_u: [10, 20, 40, 100]
+  noise: [0.0, 0.05, 0.15, 0.30]
+  lam: [0, 1]
+seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]

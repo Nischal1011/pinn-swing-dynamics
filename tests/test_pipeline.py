@@ -147,3 +147,29 @@ def test_identification_methods_run():
         torch.manual_seed(0)
         _, m_hat, d_hat, info = fit(cfg, X_u, u, max_iter=20)
         assert np.isfinite(m_hat) and np.isfinite(d_hat) and not info["failed"]
+
+
+# ---------------------------------------------------------------- sweep tooling
+def test_sweep_expansion_counts():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("run_sweep", ROOT / "scripts" / "run_sweep.py")
+    rs = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(rs)
+    counts = {f.stem: len(rs.expand(yaml.safe_load(open(f)))) for f in (ROOT / "configs" / "experiments").glob("*.yaml")}
+    assert counts == {"S1_size_noise_boundary": 320, "S2_size_noise_interior": 320, "S3_physics_weight": 30,
+                      "S4_collocation": 20, "S5_extrapolation": 30, "S6_identification": 240}
+    ids = [rid for rid, _ in rs.expand(yaml.safe_load(open(ROOT / "configs/experiments/S1_size_noise_boundary.yaml")))]
+    assert len(set(ids)) == len(ids)
+
+
+def test_failure_rule_flags_stuck_physics_run():
+    import importlib.util
+    import pandas as pd
+    spec = importlib.util.spec_from_file_location("aggregate", ROOT / "scripts" / "aggregate.py")
+    ag = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(ag)
+    df = pd.DataFrame({"pair": [2, 2, 2], "method": ["pinn"] * 3, "noise": [0.0] * 3, "seed": [0, 1, 2],
+                       "crashed": [False] * 3, "rel_l2_delta": [0.27, 0.003, 0.005],
+                       "mse_f": [2.2e-4, 2e-7, 3e-7], "physics_trained": [True] * 3})
+    out = ag.flag_failures(df, ["pair", "method", "noise"])
+    assert out["failed"].tolist() == [True, False, False] and out["fail_reason"].iloc[0] == "stuck"
