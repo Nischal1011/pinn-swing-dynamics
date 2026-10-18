@@ -50,7 +50,3 @@ pytest                       # simulator sanity checks
 
 Classical single-machine model, simulated data, small networks.
 
-## Generative AI disclosure
-
-Claude (Anthropic) was used to read the baseline code, scaffold this repository, and write the simulator and its tests.
-All generated code and results are verified by the authors.
