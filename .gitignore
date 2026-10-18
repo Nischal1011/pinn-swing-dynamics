@@ -11,3 +11,6 @@ results/raw/
 # local only (not part of the experiment code)
 proposal/
 notes/
+
+# generated media
+figures/*.mp4
