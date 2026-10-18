@@ -1,0 +1,24 @@
+# Inverse problem. Released code covers ONE pair (m=0.25, d=0.15); the 10-pair study we regenerate.
+system: {B: 0.2, V1: 1.0, V2: 1.0, delta0: 0.1, omega0: 0.1}
+pairs:
+  n_pairs: 10
+  m_range: [0.1, 0.4]
+  d_range: [0.05, 0.15]
+  trajectories_per_pair: 40
+domain:
+  P_range: [0.1, 0.18]    # [code] identification data uses 0.1, not 0.08
+  t_range: [0.0, 20.0]
+  dt: 0.1
+data:
+  N_u: 100
+  sampling: random_interior   # [code] random points from the full grid
+  noise: 0.0
+collocation:
+  N_f: 0          # [code] physics residual evaluated at the same N_u data points
+model:
+  layers: [2, 30, 30, 30, 30, 30, 1]
+  activation: tanh
+  dtype: float64
+params_init: {m: 0.0, d: -6.0}   # [code] note odd init for d; also try positive init
+train: {optimizer: lbfgs, max_iter: 50000}
+seed: 1234

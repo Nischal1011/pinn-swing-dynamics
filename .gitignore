@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+data/*
+!data/.gitkeep
+results/raw/
+.DS_Store
+.pytest_cache/
+
+# local only (not part of the experiment code)
+proposal/
+notes/

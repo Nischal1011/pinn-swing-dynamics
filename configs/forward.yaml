@@ -1,0 +1,36 @@
+# Forward problem (replication). Values marked [code] are not in the paper text;
+# they come from the authors' released script (reference/misyris2019_original).
+system:
+  m: 0.4            # [code] inertia, not stated in paper
+  d: 0.15           # [code] damping, not stated in paper
+  B: 0.2
+  V1: 1.0
+  V2: 1.0
+  delta0: 0.1
+  omega0: 0.1
+domain:
+  P_range: [0.08, 0.18]   # from the authors' code; the paper text says [0.1, 0.18], which is the identification range
+  n_P: 100
+  t_range: [0.0, 20.0]
+  dt: 0.1                 # 201 steps
+solver: {method: DOP853, rtol: 1.0e-9, atol: 1.0e-12}
+data:
+  N_u: 40
+  sampling: boundary      # [code] t=0 line + P_min and P_max trajectories. Alternative: interior
+  noise: 0.0
+collocation:
+  N_f: 8000
+  sampler: latin_hypercube
+  include_training_points: true   # [code]
+model:
+  layers: [2, 10, 10, 10, 10, 10, 1]   # inputs (P, t) -> delta
+  activation: tanh
+  init: xavier_normal
+  input_scaling: minmax_to_[-1,1]      # [code]
+  dtype: float64
+train:
+  physics_weight: 1.0     # lambda; 0 => data-only baseline
+  optimizer: lbfgs        # [code] L-BFGS-B
+  max_iter: 50000         # [code]
+  history_size: 50
+seed: 1234
