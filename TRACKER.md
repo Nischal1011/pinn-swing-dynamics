@@ -30,15 +30,15 @@ Status key: `[x]` done · `[~]` in progress · `[ ]` not started. Fill in an own
 | [x] | `scripts/run_forward.py`: one config + seed → JSON result | Nischal | Smoke run, 2k iters, seed 0: PINN 3.2e-2 vs data-only 9.6e-2 (test) |
 | [x] | Unit tests for data, physics and train (smoke test) | Nischal | `tests/test_pipeline.py`; 14 tests pass in total |
 
-## Phase 2: Replication (target Nov 1)
+## Phase 2: Replication (done Oct 18)
 
 | Status | Task | Owner | Notes |
 |---|---|---|---|
-| [ ] | Forward replication, faithful settings (full grid, boundary sampling) | | Paper: 1.34e-2 |
-| [ ] | Generate the 10 (m, d) identification datasets | | m ∈ [0.1, 0.4], d ∈ [0.05, 0.15] |
-| [ ] | Inverse PINN (trainable m, d) | | Paper: 0.74% (m), 1.28% (d) |
-| [ ] | Two-stage baseline: data-only fit, then least squares for (m, d) | | |
-| [ ] | Replication table (results figure/table 2) | | |
+| [x] | Forward replication, faithful settings (full grid, boundary sampling) | Nischal | PINN 1.04e-2, 1.03e-2, 3.39e-2 (3 seeds) vs paper 1.34e-2; data-only 0.10–0.67. ~32k iters, ~23 min per PINN run under load |
+| [x] | Generate the 10 (m, d) identification datasets | Nischal | Latin hypercube, seed 0 (`identification.make_pairs`); 40 trajectories per pair |
+| [x] | Inverse PINN (trainable m, d) | Nischal | 9 of 10 pairs within 2.6%, median 0.5%; pair 2 stuck with seed 0 (fine with seeds 1, 2). ~3 min per run |
+| [x] | Two-stage baseline: data-only fit, then least squares for (m, d) | Nischal | Median 17% error even on clean data; 0 of 10 pairs within 10% for m |
+| [x] | Replication table (results figure/table 2) | Nischal | `scripts/summarize_replication.py` → `results/replication_table.md` |
 
 ## Phase 3: Sweep infrastructure (target Nov 1)
 
@@ -89,9 +89,12 @@ Status key: `[x]` done · `[~]` in progress · `[ ]` not started. Fill in an own
 | Oct 8 | Use PyTorch float64 on CPU, L-BFGS, the authors' settings recovered from their code |
 | Oct 18 | Noise levels 0, 5, 15, 30% (of target std); ~820 runs total, ~450 PINN |
 | Oct 18 | Extrapolation trains on t ∈ [0, 10] s (one full swing period ≈ 9 s) |
+| Oct 18 | Identification: 10 (m, d) pairs by Latin hypercube (seed 0); authors' init m = 0, d = −6; residual at the 100 data points |
 
 ## Open questions
 
 - Sweeps end Nov 18 (Kaiyue's suggestion, 2 weeks for analysis before Dec 2) or Nov 22 (proposal)?
 - Presentation time limit (not announced yet) decides whether the 30 s animation fits.
-- Lower the L-BFGS cap from 50k? The error plateaus by ~2k iterations in the prototype.
+- Lower the L-BFGS cap from 50k? Full-budget PINN runs stop on their own at ~32k iterations (~23 min under load); the error is already close by ~2k.
+- Failure rule: also flag runs whose final physics residual is far above typical (pair 2 had ~1000× the normal residual but error < 1, so the proposal's rule misses it).
+- Identification sweep: 3 seeds per pair (240 runs, ~1–3 min each) instead of 1, so one unlucky seed does not decide a pair?

@@ -14,3 +14,4 @@ notes/
 
 # generated media
 figures/*.mp4
+results/**/*.log

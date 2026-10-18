@@ -1,0 +1,7 @@
+experiment,metric,ours,paper,train_time
+"Forward, PINN","rel. L2 of δ, full grid",1.82e-02 ± 1.4e-02 (n=3 seeds),1.34e-2,1398 s
+"Forward, Data-only","rel. L2 of δ, full grid",4.06e-01 ± 2.9e-01 (n=3 seeds),not reported,54 s
+"Identification, PINN",error in m over 10 pairs (seed 0),"mean 10.48%, median 0.47%; 1 of 10 pairs above 10%",0.74%,190 s
+"Identification, PINN",error in d over 10 pairs (seed 0),"mean 9.39%, median 0.50%; 1 of 10 pairs above 10%",1.28%,190 s
+"Identification, Two-stage",error in m over 10 pairs (seed 0),"mean 33.90%, median 17.39%; 10 of 10 pairs above 10%",not reported,77 s
+"Identification, Two-stage",error in d over 10 pairs (seed 0),"mean 62.29%, median 16.96%; 8 of 10 pairs above 10%",not reported,77 s

@@ -60,9 +60,10 @@ def train(model, X_u, u, X_f, lam, phys, max_iter=50000, history_every=50, snaps
         failed = True
     elapsed = time.perf_counter() - start
 
-    mse_u, mse_f = losses(True)  # report the physics residual for both models
-    mse_u, mse_f = mse_u.item(), mse_f.item()
-    failed = failed or not np.isfinite(mse_u) or not np.isfinite(mse_f)
+    # Report the physics residual for both models (needs m and d: trainable, or known in `phys`)
+    mse_u, mse_f = losses(model.inverse or "m" in phys)
+    mse_u, mse_f = mse_u.item(), (None if mse_f is None else mse_f.item())
+    failed = failed or not np.isfinite(mse_u) or (mse_f is not None and not np.isfinite(mse_f))
     state = opt.state[next(iter(opt.state))] if opt.state else {}
     out = {"mse_u": mse_u, "mse_f": mse_f, "n_iter": int(state.get("n_iter", 0)), "n_eval": n_eval[0],
            "train_time_s": elapsed, "history": history, "failed": failed}

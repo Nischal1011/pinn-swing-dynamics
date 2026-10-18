@@ -111,3 +111,39 @@ def test_inverse_model_trains_m_and_d(data):
     info = train(model, X_u, u, X_u, 1.0, PHYS, max_iter=30)
     assert {"m_hat", "d_hat"} <= set(info)
     assert (info["m_hat"], info["d_hat"]) != (0.2, 0.1)
+
+
+# ---------------------------------------------------------------- identification
+ID_CFG = yaml.safe_load(open(ROOT / "configs" / "identification.yaml"))
+
+
+def test_pairs_are_fixed_and_inside_ranges():
+    from pinn_swing.identification import make_pairs
+    a, b = make_pairs(ID_CFG), make_pairs(ID_CFG)
+    assert a.shape == (10, 2) and np.array_equal(a, b)
+    assert a[:, 0].min() >= 0.1 and a[:, 0].max() <= 0.4 and a[:, 1].min() >= 0.05 and a[:, 1].max() <= 0.15
+
+
+def test_two_stage_least_squares_recovers_exact_parameters():
+    """With exact derivatives, the least-squares step must return the true (m, d)."""
+    from pinn_swing.identification import make_pair_data
+    P, t, delta = make_pair_data(ID_CFG, 0.3, 0.1)
+    dt = t[1] - t[0]
+    d1 = np.gradient(delta, dt, axis=1, edge_order=2)
+    d2 = np.gradient(d1, dt, axis=1, edge_order=2)
+    sl = (slice(None), slice(5, -5))
+    A = np.c_[d2[sl].ravel(), d1[sl].ravel()]
+    b = (P[:, None] - 0.2 * np.sin(delta))[sl].ravel()
+    (m_hat, d_hat), *_ = np.linalg.lstsq(A, b, rcond=None)
+    assert abs(m_hat - 0.3) < 2e-3 and abs(d_hat - 0.1) < 2e-3
+
+
+def test_identification_methods_run():
+    from pinn_swing.identification import fit_pinn, fit_two_stage, make_pair_data, sample_grid
+    cfg = {**ID_CFG, "model": {"layers": [2, 8, 8, 1]}}
+    P, t, delta = make_pair_data(cfg, 0.25, 0.15)
+    X_u, u = sample_grid(P, t, delta, 50, np.random.default_rng(0))
+    for fit in (fit_pinn, fit_two_stage):
+        torch.manual_seed(0)
+        _, m_hat, d_hat, info = fit(cfg, X_u, u, max_iter=20)
+        assert np.isfinite(m_hat) and np.isfinite(d_hat) and not info["failed"]

@@ -1,24 +1,28 @@
-# Inverse problem. Released code covers ONE pair (m=0.25, d=0.15); the 10-pair study we regenerate.
+# Inverse problem: identify m and d from trajectory data.
+# The released code covers ONE pair (m=0.25, d=0.15); we regenerate the paper's 10-pair study.
 system: {B: 0.2, V1: 1.0, V2: 1.0, delta0: 0.1, omega0: 0.1}
+solver: {method: DOP853, rtol: 1.0e-9, atol: 1.0e-12}
 pairs:
   n_pairs: 10
   m_range: [0.1, 0.4]
   d_range: [0.05, 0.15]
+  sampler: latin_hypercube
+  seed: 0                  # fixes the 10 (m, d) pairs for everyone
   trajectories_per_pair: 40
 domain:
-  P_range: [0.1, 0.18]    # [code] identification data uses 0.1, not 0.08
+  P_range: [0.1, 0.18]     # [code] identification data uses 0.1, not 0.08
+  scaling_lb_P: 0.08       # [code] input scaling still uses 0.08 as the lower bound
   t_range: [0.0, 20.0]
   dt: 0.1
 data:
   N_u: 100
-  sampling: random_interior   # [code] random points from the full grid
+  sampling: random_grid    # [code] random points from the full (P, t) grid
   noise: 0.0
 collocation:
-  N_f: 0          # [code] physics residual evaluated at the same N_u data points
+  N_f: 0                   # [code] physics residual evaluated at the same N_u data points
 model:
   layers: [2, 30, 30, 30, 30, 30, 1]
   activation: tanh
   dtype: float64
-params_init: {m: 0.0, d: -6.0}   # [code] note odd init for d; also try positive init
+params_init: {m: 0.0, d: -6.0}   # [code] the authors' initial values
 train: {optimizer: lbfgs, max_iter: 50000}
-seed: 1234
