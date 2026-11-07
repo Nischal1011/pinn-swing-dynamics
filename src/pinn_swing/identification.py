@@ -15,13 +15,28 @@ from .sim import simulate_grid
 from .train import train
 
 
+def is_stable(cfg, m, d):
+    """True if every trajectory of the pair stays synchronous (rotor angle never passes pi)."""
+    return bool(make_pair_data(cfg, m, d)[2].max() < np.pi)
+
+
 def make_pairs(cfg):
-    """The (m, d) pairs, drawn by Latin hypercube with a fixed seed. Shape (n_pairs, 2)."""
+    """The (m, d) pairs, shape (n_pairs, 2).
+
+    Candidates come from a Latin hypercube with a fixed seed. With `require_stable`, candidates where any
+    trajectory loses synchronism (delta grows past pi instead of settling) are skipped: that is a different
+    regime from the swings this study is about, and it would inflate the noise scale (noise is relative to the
+    pair's std of delta)."""
     pc = cfg["pairs"]
-    u = qmc.LatinHypercube(d=2, seed=pc["seed"]).random(pc["n_pairs"])
     lo = np.array([pc["m_range"][0], pc["d_range"][0]])
     hi = np.array([pc["m_range"][1], pc["d_range"][1]])
-    return lo + (hi - lo) * u
+    if not pc.get("require_stable", False):
+        return lo + (hi - lo) * qmc.LatinHypercube(d=2, seed=pc["seed"]).random(pc["n_pairs"])
+    cand = lo + (hi - lo) * qmc.LatinHypercube(d=2, seed=pc["seed"]).random(pc.get("n_candidates", 100))
+    keep = [c for c in cand if is_stable(cfg, *c)][:pc["n_pairs"]]
+    if len(keep) < pc["n_pairs"]:
+        raise ValueError(f"only {len(keep)} stable pairs among the candidates; increase n_candidates")
+    return np.array(keep)
 
 
 def make_pair_data(cfg, m, d):

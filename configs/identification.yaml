@@ -8,6 +8,8 @@ pairs:
   d_range: [0.05, 0.15]
   sampler: latin_hypercube
   seed: 0                  # fixes the 10 (m, d) pairs for everyone
+  require_stable: true     # skip pairs where any trajectory loses synchronism (max delta >= pi)
+  n_candidates: 100        # Latin hypercube candidates; the first 10 stable ones are used
   trajectories_per_pair: 40
 domain:
   P_range: [0.1, 0.18]     # [code] identification data uses 0.1, not 0.08

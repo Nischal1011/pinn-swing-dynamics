@@ -124,6 +124,12 @@ def test_pairs_are_fixed_and_inside_ranges():
     assert a[:, 0].min() >= 0.1 and a[:, 0].max() <= 0.4 and a[:, 1].min() >= 0.05 and a[:, 1].max() <= 0.15
 
 
+def test_pairs_are_all_synchronous():
+    from pinn_swing.identification import is_stable, make_pairs
+    assert all(is_stable(ID_CFG, m, d) for m, d in make_pairs(ID_CFG))
+    assert not is_stable(ID_CFG, 0.174, 0.051)  # a low-damping pair that loses synchronism
+
+
 def test_two_stage_least_squares_recovers_exact_parameters():
     """With exact derivatives, the least-squares step must return the true (m, d)."""
     from pinn_swing.identification import make_pair_data

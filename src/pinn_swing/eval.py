@@ -35,7 +35,9 @@ def evaluate_forward(model, data, phys, idx=None, t_split=None):
     out = {"rel_l2_delta": rel_l2(delta_hat, delta),
            "rel_l2_omega_autodiff": rel_l2(omega_ad, omega),
            "rel_l2_omega_fd": rel_l2(omega_fd, omega),
-           "residual_rms": float(np.sqrt(np.mean(f ** 2)))}
+           "residual_rms": float(np.sqrt(np.mean(f ** 2))),
+           # RMS error over trajectories at each time step, for the error-over-time figure
+           "rms_err_delta_by_time": np.sqrt(np.mean((delta_hat - delta) ** 2, axis=0)).round(6).tolist()}
     if t_split is not None:
         late = data.t > t_split + 1e-9
         out["rel_l2_delta_extrap"] = rel_l2(delta_hat[:, late], delta[:, late])
