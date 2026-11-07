@@ -1,8 +1,9 @@
 # How much does physics help? A PINN study for SMIB swing dynamics
 
-CISC 889 final project. Replicates Misyris, Venzke & Chatzivasileiadis, *Physics-Informed Neural Networks for Power
-Systems* (arXiv 1911.03737). Then it ablates the swing-equation loss: same network, data, optimizer, budget, and seeds,
-with the physics weight lambda in {0, 0.01, 0.1, 1, 10}. The axes are data size, noise, and extrapolation window.
+CISC 889 final project. We replicate Misyris, Venzke & Chatzivasileiadis, *Physics-Informed Neural Networks for Power
+Systems* (arXiv 1911.03737), then ablate the swing-equation loss: same network, data, optimizer, iteration budget and
+seeds, with and without the physics term. The axes are data size, measurement noise, extrapolation window, and
+parameter identification under noise.
 
 ```
 m * delta'' + d * delta' + B * V1 * V2 * sin(delta) - P = 0
@@ -11,42 +12,65 @@ m * delta'' + d * delta' + B * V1 * V2 * sin(delta) - P = 0
 ## Layout
 
 ```
-configs/                 forward.yaml, identification.yaml, experiments/*.yaml (one file per sweep)
+configs/
+  forward.yaml               forward problem (authors' settings recovered from their code)
+  identification.yaml        inverse problem: 10 stable (m, d) pairs, network, optimizer
+  experiments/S1..S6.yaml    one file per sweep (960 runs in total)
 src/pinn_swing/
-  sim.py                 reference solver (SciPy DOP853)            [done, verified]
-  data.py                grids, train/val/test trajectory split, N_u sampling (boundary | interior), noise
-  models.py              MLP (P, t) -> delta; trainable m, d for identification
-  physics.py             swing residual via autodiff
-  train.py               L-BFGS loop, loss = MSE_u + lambda * MSE_f, logging
-  eval.py                rel. L2 (delta, omega), extrapolation error, residual, timing, param error
-  viz.py                 the five figures
+  sim.py                     reference solver (SciPy DOP853), verified against the authors' data
+  data.py                    forward grid, trajectory split, boundary/interior sampling, noise, collocation
+  models.py                  tanh MLP (P, t) -> delta; optional trainable m, d
+  physics.py                 swing-equation residual via autodiff
+  train.py                   L-BFGS, loss = MSE_u + lambda * MSE_f (same code path for lambda = 0)
+  eval.py                    relative L2 errors (delta, omega), extrapolation error, residual, error over time
+  identification.py          inverse PINN and the two-stage baseline
 scripts/
-  make_data.py           regenerate data/ from configs
-  run_sweep.py           run an experiment config over seeds in parallel -> results/raw/*.json
-  aggregate.py           results/raw -> results/*.csv (mean, 95% CI, failed-run counts)
-  reproduce.sh           end to end
-tests/                   simulator sanity checks (pytest)
-reference/               authors' original TF1 code + .mat data (read-only, for comparison)
-notebooks/               prototypes and exploration
-data/ results/ figures/  generated outputs
+  run_forward.py             one forward run -> JSON
+  run_identification.py      one identification run -> JSON
+  run_sweep.py               a whole sweep in parallel, restart-safe, shardable across machines
+  aggregate.py               raw JSON -> per-run and per-setting CSVs (mean, 95% bootstrap CI, failures)
+  stats.py                   paired Wilcoxon tests (PINN vs. data-only, PINN vs. two-stage)
+  summarize_replication.py   replication table, ours vs. the paper
+  make_figures.py            result figures and table 5
+  animate_overview.py        presentation animation (scene 1)
+tests/                       simulator, data, physics, training, identification and sweep tooling (pytest)
+reference/                   authors' original TF1 code and .mat data (read-only)
+notebooks/                   early prototype
+results/                     summaries, tables and replication runs (raw sweep output is not committed)
+figures/                     generated figures
 ```
 
-## Quick start
+## Reproduce
 
 ```bash
 pip install -r requirements.txt
-pytest                       # simulator sanity checks
+pytest                                                    # all tests
+python scripts/run_sweep.py configs/experiments/S1_size_noise_boundary.yaml --workers 8
+python scripts/aggregate.py S1_size_noise_boundary        # repeat for S2..S6
+python scripts/summarize_replication.py
+python scripts/stats.py
+python scripts/make_figures.py
 ```
+
+A full-budget PINN run takes ~20–35 min on one CPU thread; all sweeps take ~21 h with 8 parallel workers. Use
+`--shard i/n` to split a sweep across machines.
 
 ## Status
 
-- [x] Simulator matches the authors' released data (rel. L2 2.4e-4) and passes sanity checks
-- [x] Prototype forward PINN: 2.85e-2 vs paper 1.34e-2; data-only 2.8e-1 (`notebooks/prototype_forward_pinn.py`)
-- [ ] Replication: forward and identification
-- [ ] Ablation sweeps
-- [ ] Figures, slides
+See [TRACKER.md](TRACKER.md) for the detailed plan.
+
+- [x] Simulator matches the authors' released data (rel. L2 2.4e-4)
+- [x] Forward replication: PINN 1.0e-2–3.4e-2 (3 seeds) vs. paper 1.34e-2
+- [x] Sweeps S3 (physics weight) and S4 (collocation points)
+- [ ] Sweeps S1, S2 (data size × noise), S5 (extrapolation), S6 (identification) running
+- [ ] Figures, statistics, slides
 
 ## Limitations
 
-Classical single-machine model, simulated data, small networks.
+Classical single-machine model, simulated data, small networks trained with L-BFGS. Identification uses only pairs
+whose trajectories stay synchronous, which limits the damping range to d ≈ 0.085–0.15.
 
+## Generative AI disclosure
+
+Claude (Anthropic) was used to read the baseline code, scaffold this repository, and write code and tests.
+All generated code and results are verified by the authors.

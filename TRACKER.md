@@ -63,7 +63,7 @@ Status key: `[x]` done · `[~]` in progress · `[ ]` not started. Fill in an own
 
 | Status | Task | Owner | Notes |
 |---|---|---|---|
-| [ ] | Statistics: bootstrap CIs, Wilcoxon signed-rank tests | | |
+| [~] | Statistics: bootstrap CIs, Wilcoxon signed-rank tests | Nischal | CIs in `aggregate.py`; paired tests in `scripts/stats.py` (tested); final run after S1, S2, S6 |
 | [ ] | Fig/Table 1: model schematic | | Exists in the proposal |
 | [~] | Fig/Table 2: replication table | Nischal | Forward rows done; identification rows come from S6 clean-data runs |
 | [~] | Fig/Table 3: error vs N_u and noise (both regimes) | Nischal | `scripts/make_figures.py` ready; needs S1, S2 |
