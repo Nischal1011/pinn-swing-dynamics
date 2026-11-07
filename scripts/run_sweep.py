@@ -11,6 +11,7 @@ import argparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import itertools
 from pathlib import Path
+import re
 import subprocess
 import sys
 import time
@@ -43,6 +44,32 @@ def expected_cost(args):
     return 3 if (args.get("lam", 1) or 0) > 0 else 0
 
 
+def free_memory_pct():
+    """System-wide free memory in percent (macOS `memory_pressure`, Linux /proc/meminfo); None if unknown."""
+    try:
+        out = subprocess.run(["memory_pressure"], capture_output=True, text=True, timeout=30).stdout
+        m = re.search(r"free percentage:\s*(\d+)%", out)
+        if m:
+            return int(m.group(1))
+    except (OSError, subprocess.SubprocessError):
+        pass
+    try:
+        info = dict(line.split(":", 1) for line in open("/proc/meminfo"))
+        return 100 * int(info["MemAvailable"].split()[0]) // int(info["MemTotal"].split()[0])
+    except (OSError, KeyError, ValueError):
+        return None
+
+
+def wait_for_memory(min_pct, poll_s=60):
+    """Block until free memory is at least min_pct, so a run never starts on a machine that is short on RAM."""
+    while min_pct > 0:
+        pct = free_memory_pct()
+        if pct is None or pct >= min_pct:
+            return
+        print(f"  free memory {pct}% < {min_pct}%, waiting {poll_s}s before the next run", flush=True)
+        time.sleep(poll_s)
+
+
 def command(script, args, out, overrides):
     cmd = [sys.executable, str(SCRIPTS[script]), "--threads", "1", "--out", str(out)]
     for k, v in {**args, **overrides}.items():
@@ -58,6 +85,8 @@ def main(argv=None):
     p.add_argument("--shard", default="0/1", help="i/n: run only every n-th run starting at i (split across machines)")
     p.add_argument("--set", nargs="*", default=[], metavar="KEY=VALUE",
                    help="override an argument for every run, e.g. max_iter=50 for a smoke test")
+    p.add_argument("--min-free-mem", type=int, default=0, metavar="PCT",
+                   help="wait before each run until at least PCT%% of system memory is free (0 = off)")
     p.add_argument("--out-root", default=str(ROOT / "results" / "raw"))
     a = p.parse_args(argv)
 
@@ -77,6 +106,7 @@ def main(argv=None):
 
     def one(rid, args):
         out = out_dir / f"{rid}.json"
+        wait_for_memory(a.min_free_mem)
         proc = subprocess.run(command(exp["script"], args, out, overrides), capture_output=True, text=True, cwd=ROOT)
         if proc.returncode != 0:
             (out_dir / f"{rid}.log").write_text(proc.stdout + proc.stderr)

@@ -16,4 +16,3 @@ notes/
 figures/*.mp4
 results/**/*.log
 results/archive_*/raw_*/
-figures/fig4_extrapolation.png
