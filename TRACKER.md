@@ -52,12 +52,12 @@ Status key: `[x]` done · `[~]` in progress · `[ ]` not started. Fill in an own
 
 | Status | Sweep | Runs | Owner | Notes |
 |---|---|---|---|---|
-| [~] | S1 Data size × noise, boundary sampling | 320 | Nischal | Running from Nov 7 (after S5); N_u {10,20,40,100} × noise {0,5,15,30}% × λ {0,1} × 10 seeds |
+| [~] | S1 Data size × noise, boundary sampling | 320 | Nischal | 40/320 done; queued after S6 (one run at a time); N_u {10,20,40,100} × noise {0,5,15,30}% × λ {0,1} × 10 seeds |
 | [~] | S2 Data size × noise, interior sampling | 320 | Nischal | Queued after S1 |
 | [x] | S3 Physics weight λ ∈ {0.01, 0.1, 10} | 30 | Nischal | 0 failed. Error falls as λ grows: 7.6e-2 (0.01), 3.2e-2 (0.1), 1.4e-2 (10) |
 | [x] | S4 Collocation N_f ∈ {500, 2000} | 20 | Nischal | 0 failed. 500 and 2000 points give the same error (~2.1e-2); 500 is 2× faster |
-| [~] | S5 Extrapolation (train on t ≤ 10 s) | 30 | Nischal | 8/30 done before the Oct session ended; resumed Nov 7 |
-| [~] | S6 Identification × noise | 240 | Nischal | Re-running Nov 7 on stable pairs only (first run's pairs 0, 1, 4, 9 lost synchronism; archived in `results/archive_unstable_pairs/`) |
+| [x] | S5 Extrapolation (train on t ≤ 10 s) | 30 | Nischal | Physics on t ≤ 20 s: 1.8e-2, error stays flat past 10 s. Physics only on t ≤ 10 s: 0.26 (fine inside the window, diverges after). Data-only: 0.51 (1 failed). Figure 4 |
+| [~] | S6 Identification × noise | 240 | Nischal | 84/240 done; running first in the queue. Re-run Nov 7 on stable pairs only (first run's pairs 0, 1, 4, 9 lost synchronism; archived in `results/archive_unstable_pairs/`) |
 
 ## Phase 5: Analysis (Nov 19 – Dec 2)
 
@@ -94,6 +94,7 @@ Status key: `[x]` done · `[~]` in progress · `[ ]` not started. Fill in an own
 | Oct 18 | Identification sweep uses 3 seeds per pair: 240 runs; total 960 runs |
 | Oct 18 | Identification: 10 (m, d) pairs by Latin hypercube (seed 0); authors' init m = 0, d = −6; residual at the 100 data points |
 | Nov 7 | Identification pairs must be stable: all 40 trajectories stay below δ = π. Pairs that lose synchronism are a different regime and inflate the noise scale. Effective d range becomes 0.085–0.148 (report as a limitation) |
+| Nov 7 | Sweeps run one at a time (`--workers 1 --min-free-mem 25`) to keep the laptop's RAM safe; queue S6 → S1 → S2, estimated to finish ~Nov 11–13 |
 | Nov 7 | Identification replication row = S6 clean-data runs (10 pairs × 3 seeds) |
 
 ## Open questions
