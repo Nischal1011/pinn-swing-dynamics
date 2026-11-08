@@ -1,3 +1,16 @@
+### Identification of m and d (median over 10 pairs of each pair's median over 3 seeds)
+
+| method | noise | error m (%) | error d (%) | failed / runs | time per run (s) |
+|---|---|---|---|---|---|
+| pinn | 0% | 0.51 | 0.53 | 0 / 30 | 202 |
+| pinn | 5% | 17.26 | 15.25 | 0 / 30 | 206 |
+| pinn | 15% | 83.36 | 91.94 | 3 / 30 | 207 |
+| pinn | 30% | 89.75 | 94.27 | 8 / 30 | 198 |
+| two_stage | 0% | 15.41 | 12.77 | 0 / 30 | 56 |
+| two_stage | 5% | 92.11 | 43.43 | 0 / 30 | 57 |
+| two_stage | 15% | 100.03 | 89.27 | 3 / 30 | 59 |
+| two_stage | 30% | 100.02 | 98.38 | 5 / 30 | 57 |
+
 ### Physics weight λ (N_u = 40, no noise, boundary sampling)
 
 | λ | rel. L2 error of δ (mean [95% CI]) | residual RMS | failed / runs | time per run (s) |

@@ -52,12 +52,12 @@ Status key: `[x]` done · `[~]` in progress · `[ ]` not started. Fill in an own
 
 | Status | Sweep | Runs | Owner | Notes |
 |---|---|---|---|---|
-| [~] | S1 Data size × noise, boundary sampling | 320 | Nischal | 40/320 done; queued after S6 (one run at a time); N_u {10,20,40,100} × noise {0,5,15,30}% × λ {0,1} × 10 seeds |
+| [~] | S1 Data size × noise, boundary sampling | 320 | Nischal | running since Nov 7 20:19, one run at a time (~28 min per PINN run), ETA ~Nov 10; N_u {10,20,40,100} × noise {0,5,15,30}% × λ {0,1} × 10 seeds |
 | [~] | S2 Data size × noise, interior sampling | 320 | Nischal | Queued after S1 |
 | [x] | S3 Physics weight λ ∈ {0.01, 0.1, 10} | 30 | Nischal | 0 failed. Error falls as λ grows: 7.6e-2 (0.01), 3.2e-2 (0.1), 1.4e-2 (10) |
 | [x] | S4 Collocation N_f ∈ {500, 2000} | 20 | Nischal | 0 failed. 500 and 2000 points give the same error (~2.1e-2); 500 is 2× faster |
 | [x] | S5 Extrapolation (train on t ≤ 10 s) | 30 | Nischal | Physics on t ≤ 20 s: 1.8e-2, error stays flat past 10 s. Physics only on t ≤ 10 s: 0.26 (fine inside the window, diverges after). Data-only: 0.51 (1 failed). Figure 4 |
-| [~] | S6 Identification × noise | 240 | Nischal | 84/240 done; running first in the queue. Re-run Nov 7 on stable pairs only (first run's pairs 0, 1, 4, 9 lost synchronism; archived in `results/archive_unstable_pairs/`) |
+| [x] | S6 Identification × noise | 240 | Nischal | Done Nov 7, 0 errors. Clean: PINN 0.5% vs two-stage 13–15%; 5% noise: PINN ~15–17% vs two-stage 43–92%; 15–30% noise: both fail (>80%). Re-run Nov 7 on stable pairs only (first run's pairs 0, 1, 4, 9 lost synchronism; archived in `results/archive_unstable_pairs/`) |
 
 ## Phase 5: Analysis (Nov 19 – Dec 2)
 
