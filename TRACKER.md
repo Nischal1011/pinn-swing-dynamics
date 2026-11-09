@@ -75,8 +75,9 @@ Status key: `[x]` done · `[~]` in progress · `[ ]` not started. Fill in an own
 | Status | Task | Owner | Notes |
 |---|---|---|---|
 | [~] | Overview animation, scene 1 (rotor swing) | Nischal | `scripts/animate_overview.py` |
-| [ ] | Animation scenes 2–4 (sparse data, training split screen, extrapolation) | | Needs training snapshots |
-| [ ] | Slides | | |
+| [~] | Animation scenes 2 (with vs. without physics, extrapolation) and 3 (identifying m, d) | Nischal | Code done and tested (`record_animation_runs.py`, `animate_training.py`); full recording queued to run automatically after S2 |
+| [ ] | Animation scene 4 (results summary) | | Needs S1/S2 |
+| [~] | Slides | Nischal | Outline drafted (local notes/slide_outline.md, 12 slides) |
 | [ ] | README final: results summary, how to reproduce, limitations | | |
 | [ ] | `scripts/reproduce.sh` end to end | | |
 
