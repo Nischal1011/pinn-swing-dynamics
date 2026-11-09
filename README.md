@@ -32,7 +32,9 @@ scripts/
   stats.py                   paired Wilcoxon tests (PINN vs. data-only, PINN vs. two-stage)
   summarize_replication.py   replication table, ours vs. the paper
   make_figures.py            result figures and table 5
-  animate_overview.py        presentation animation (scene 1)
+  animate_overview.py        presentation animation, scene 1 (the swing)
+  record_animation_runs.py   records predictions during training for scenes 2-3
+  animate_training.py        scenes 2 (with vs. without physics) and 3 (identifying m, d)
 tests/                       simulator, data, physics, training, identification and sweep tooling (pytest)
 reference/                   authors' original TF1 code and .mat data (read-only)
 notebooks/                   early prototype

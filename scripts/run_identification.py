@@ -36,7 +36,8 @@ def parse_args(argv=None):
     return p.parse_args(argv)
 
 
-def run(args):
+def run(args, snapshot_fn=None):
+    """snapshot_fn(model, n_eval) is called after every loss evaluation (used by the animation recorder)."""
     cfg = yaml.safe_load(open(args.config))
     m_true, d_true = (0.25, 0.15) if args.released else make_pairs(cfg)[args.pair]
     N_u = args.N_u or cfg["data"]["N_u"]
@@ -51,7 +52,7 @@ def run(args):
         u = u + args.noise * delta.std() * rng.standard_normal(u.shape)
 
     fit = fit_pinn if args.method == "pinn" else fit_two_stage
-    model, m_hat, d_hat, info = fit(cfg, X_u, u, max_iter)
+    model, m_hat, d_hat, info = fit(cfg, X_u, u, max_iter, snapshot_fn=snapshot_fn)
     info.pop("history", None)
     return {
         "config": {"pair": None if args.released else args.pair, "m_true": float(m_true), "d_true": float(d_true),

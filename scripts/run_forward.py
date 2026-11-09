@@ -40,7 +40,8 @@ def parse_args(argv=None):
     return p.parse_args(argv)
 
 
-def run(args):
+def run(args, snapshot_fn=None):
+    """snapshot_fn(model, n_eval) is called after every loss evaluation (used by the animation recorder)."""
     cfg = yaml.safe_load(open(args.config))
     s, dom = cfg["system"], cfg["domain"]
     run_cfg = {
@@ -74,12 +75,15 @@ def run(args):
 
     phys = {k: s[k] for k in ("m", "d", "B", "V1", "V2")}
     model = SwingNet(run_cfg["layers"], lb, ub)
-    info = train(model, X_u, u_noisy, X_f, run_cfg["lam"], phys, max_iter=run_cfg["max_iter"])
+    info = train(model, X_u, u_noisy, X_f, run_cfg["lam"], phys, max_iter=run_cfg["max_iter"],
+                 snapshot_fn=snapshot_fn, snapshot_every=1 if snapshot_fn else None)
 
     t_split = run_cfg["t_train_max"]
     result = {"config": run_cfg, "train": info,
               "test": evaluate_forward(model, data, phys, idx=data.test_idx, t_split=t_split),
               "full_grid": evaluate_forward(model, data, phys, t_split=t_split)}
+    if snapshot_fn is not None:
+        result["model"], result["data"], result["X_u"] = model, data, X_u
     return result
 
 

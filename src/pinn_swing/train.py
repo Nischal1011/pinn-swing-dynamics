@@ -48,7 +48,7 @@ def train(model, X_u, u, X_f, lam, phys, max_iter=50000, history_every=50, snaps
         n_eval[0] += 1
         if n_eval[0] % history_every == 1:
             history.append((n_eval[0], loss.item(), mse_u.item(), None if mse_f is None else mse_f.item()))
-        if snapshot_fn is not None and snapshot_every and n_eval[0] % snapshot_every == 1:
+        if snapshot_fn is not None and snapshot_every and (n_eval[0] - 1) % snapshot_every == 0:
             snapshot_fn(model, n_eval[0])
         return loss
 

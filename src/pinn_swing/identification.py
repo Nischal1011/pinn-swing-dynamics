@@ -64,20 +64,22 @@ def bounds(cfg):
     return lb, ub
 
 
-def fit_pinn(cfg, X_u, u, max_iter):
+def fit_pinn(cfg, X_u, u, max_iter, snapshot_fn=None):
     s = cfg["system"]
     lb, ub = bounds(cfg)
     init = cfg["params_init"]
     model = SwingNet(cfg["model"]["layers"], lb, ub, m_init=init["m"], d_init=init["d"])
-    info = train(model, X_u, u, X_u, 1.0, {k: s[k] for k in ("B", "V1", "V2")}, max_iter=max_iter)
+    info = train(model, X_u, u, X_u, 1.0, {k: s[k] for k in ("B", "V1", "V2")}, max_iter=max_iter,
+                 snapshot_fn=snapshot_fn, snapshot_every=1 if snapshot_fn else None)
     return model, info["m_hat"], info["d_hat"], info
 
 
-def fit_two_stage(cfg, X_u, u, max_iter):
+def fit_two_stage(cfg, X_u, u, max_iter, snapshot_fn=None):
     s = cfg["system"]
     lb, ub = bounds(cfg)
     model = SwingNet(cfg["model"]["layers"], lb, ub)
-    info = train(model, X_u, u, X_u, 0.0, {k: s[k] for k in ("B", "V1", "V2")}, max_iter=max_iter)
+    info = train(model, X_u, u, X_u, 0.0, {k: s[k] for k in ("B", "V1", "V2")}, max_iter=max_iter,
+                 snapshot_fn=snapshot_fn, snapshot_every=1 if snapshot_fn else None)
     P = torch.as_tensor(X_u[:, :1], dtype=DTYPE)
     t = torch.as_tensor(X_u[:, 1:], dtype=DTYPE)
     delta, delta_t, delta_tt = (x.detach().numpy().ravel() for x in derivatives(model, P, t, order=2))
