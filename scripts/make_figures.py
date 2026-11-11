@@ -37,9 +37,13 @@ def style(ax):
 
 
 def fig3():
-    rows = [(r, read(f"S1_size_noise_boundary" if r == "boundary" else "S2_size_noise_interior"))
-            for r in ("boundary", "interior")]
-    rows = [(r, df) for r, df in rows if df is not None]
+    """Median and interquartile range over ALL seeds, failed runs included: dropping runs with error > 1 would
+    hide exactly the cases where data-only training overfits the noise."""
+    rows = []
+    for regime, name in (("boundary", "S1_size_noise_boundary"), ("interior", "S2_size_noise_interior")):
+        f = RES / f"{name}_runs.csv"
+        if f.exists():
+            rows.append((regime, pd.read_csv(f)))
     if not rows:
         return print("fig3: no S1/S2 results yet, skipped")
     noises = [0.0, 0.05, 0.15, 0.30]
@@ -49,17 +53,20 @@ def fig3():
         for j, nz in enumerate(noises):
             ax = axes[i, j]
             style(ax)
+            ax.axhline(1, color=MUTED, lw=0.8, ls=":")
             for lam, (label, col, mk, ls) in SERIES.items():
-                g = df[(df["lam"] == lam) & np.isclose(df["noise"], nz)].sort_values("N_u")
-                if g.empty:
+                sel = df[(df["lam"] == lam) & np.isclose(df["noise"], nz)]
+                if sel.empty:
                     continue
-                ax.fill_between(g["N_u"], g["rel_l2_delta_ci_lo"], g["rel_l2_delta_ci_hi"], color=col, alpha=0.15, lw=0)
-                ax.plot(g["N_u"], g["rel_l2_delta_mean"], color=col, marker=mk, ms=7, ls=ls, lw=2, label=label,
+                g = sel.groupby("N_u")["rel_l2_delta"].agg(
+                    med="median", lo=lambda x: x.quantile(0.25), hi=lambda x: x.quantile(0.75),
+                    n="size", n_bad=lambda x: int((x > 1).sum())).reset_index()
+                ax.fill_between(g["N_u"], g["lo"], g["hi"], color=col, alpha=0.15, lw=0)
+                ax.plot(g["N_u"], g["med"], color=col, marker=mk, ms=7, ls=ls, lw=2, label=label,
                         markeredgecolor="white", markeredgewidth=1.2)
-                fails = g[g["n_failed"] > 0]
-                for _, r in fails.iterrows():
-                    ax.annotate(f"{int(r['n_failed'])} failed", (r["N_u"], r["rel_l2_delta_mean"]), fontsize=8,
-                                color=MUTED, xytext=(4, 6), textcoords="offset points")
+                for r in g[g["n_bad"] > 0].itertuples():
+                    ax.annotate(f"{int(r.n_bad)}/{int(r.n)}", (r.N_u, r.hi), fontsize=8, color=col,
+                                ha="center", xytext=(0, 5), textcoords="offset points")
             ax.set_xscale("log")
             ax.set_yscale("log")
             ax.set_xticks([10, 20, 40, 100], ["10", "20", "40", "100"])
@@ -72,9 +79,12 @@ def fig3():
                 ax.set_xlabel("measurements N_u")
     h, l = axes[0, 0].get_legend_handles_labels()
     fig.legend(h, l, loc="upper right", frameon=False, ncol=2, bbox_to_anchor=(0.99, 1.0))
-    fig.suptitle("Physics loss vs. data alone as data shrinks and noise grows (mean, 95% CI over 10 seeds)",
-                 x=0.01, ha="left", fontsize=13, color=INK, weight="bold")
-    fig.tight_layout(rect=(0, 0, 1, 0.95))
+    fig.suptitle("Physics loss vs. data alone as data shrinks and noise grows",
+                 x=0.01, y=0.995, ha="left", fontsize=13, color=INK, weight="bold")
+    fig.text(0.01, 0.92 if len(rows) == 1 else 0.955,
+             "Median and interquartile range over 10 seeds, all runs included. "
+             "k/10 = runs with relative error above 1 (dotted line).", fontsize=10, color=MUTED)
+    fig.tight_layout(rect=(0, 0, 1, 0.9 if len(rows) == 1 else 0.94))
     out = FIG / "fig3_error_vs_data_noise.png"
     fig.savefig(out)
     print("wrote", out)
