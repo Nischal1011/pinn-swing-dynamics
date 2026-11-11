@@ -77,7 +77,7 @@ Status key: `[x]` done · `[~]` in progress · `[ ]` not started. Fill in an own
 | [~] | Overview animation, scene 1 (rotor swing) | Nischal | `scripts/animate_overview.py` |
 | [~] | Animation scenes 2 (with vs. without physics, extrapolation) and 3 (identifying m, d) | Nischal | Code done and tested (`record_animation_runs.py`, `animate_training.py`); full recording queued to run automatically after S2 |
 | [ ] | Animation scene 4 (results summary) | | Needs S1/S2 |
-| [~] | Slides | Nischal | Outline drafted (local notes/slide_outline.md, 12 slides) |
+| [~] | Slides | Nischal | PowerPoint v1 built Nov 10: 12 slides + backup, speaker notes, videos embedded (local presentation/build_deck.py, rebuilds from results). Final rebuild after S2 and the final animation render |
 | [ ] | README final: results summary, how to reproduce, limitations | | |
 | [ ] | `scripts/reproduce.sh` end to end | | |
 
