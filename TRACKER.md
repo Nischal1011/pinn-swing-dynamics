@@ -96,11 +96,11 @@ Status key: `[x]` done · `[~]` in progress · `[ ]` not started. Fill in an own
 | Oct 18 | Identification: 10 (m, d) pairs by Latin hypercube (seed 0); authors' init m = 0, d = −6; residual at the 100 data points |
 | Nov 7 | Identification pairs must be stable: all 40 trajectories stay below δ = π. Pairs that lose synchronism are a different regime and inflate the noise scale. Effective d range becomes 0.085–0.148 (report as a limitation) |
 | Nov 7 | Sweeps run one at a time (`--workers 1 --min-free-mem 25`) to keep the laptop's RAM safe; queue S6 → S1 → S2, estimated to finish ~Nov 11–13 |
+| Nov 10 | Presentation: 18-min slot = 15 min talk + 3 min Q&A, strictly enforced; no poster. 12 slides planned at 13:40 with ~3.5 min per speaker; the ~30 s of animation fits |
 | Nov 10 | Figure 3 shows median and interquartile range over all 10 seeds, failed runs included (mean over non-failed runs hid the data-only overfitting) |
 | Nov 7 | Identification replication row = S6 clean-data runs (10 pairs × 3 seeds) |
 
 ## Open questions
 
 - Sweeps end Nov 18 (Kaiyue's suggestion, 2 weeks for analysis before Dec 2) or Nov 22 (proposal)?
-- Presentation time limit (not announced yet) decides whether the 30 s animation fits.
 
