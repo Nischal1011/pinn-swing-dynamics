@@ -70,8 +70,7 @@ scripts/
   record_animation_runs.py   records predictions during training for scenes 2-3
   animate_training.py        scenes 2 (with vs. without physics) and 3 (identifying m, d)
 tests/                       simulator, data, physics, training, identification and sweep tooling (pytest)
-reference/                   authors' original TF1 code and .mat data (read-only)
-notebooks/                   early prototype
+reference/                   authors' released .mat data, used to verify the simulator (read-only)
 results/                     tables, per-run CSVs, replication runs (raw sweep JSON is not committed)
 figures/                     Fig. 1 and Fig. 2
 ```

@@ -16,3 +16,10 @@ notes/
 figures/*.mp4
 results/**/*.log
 results/archive_*/raw_*/
+
+# local planning and superseded material (kept on disk, not in the repo)
+TRACKER.md
+notebooks/
+results/archive_*/
+reference/misyris2019_original/README.md
+reference/misyris2019_original/continuous_time_*/
