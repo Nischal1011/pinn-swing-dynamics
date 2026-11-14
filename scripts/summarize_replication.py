@@ -1,7 +1,7 @@
 """Build the replication table (ours vs. the paper): forward runs in results/replication/, identification
 from the clean-data runs of the S6 sweep (results/S6_identification_runs.csv).
 
-Writes results/replication_table.md and results/replication_table.csv.
+Table 1 of the project. Writes results/table1_replication.md and results/table1_replication.csv.
 """
 import csv
 import glob
@@ -58,13 +58,16 @@ if S6.exists():  # identification replication = clean-data runs of the S6 sweep 
                 "train_time": f"{g['train_time_s'].mean():.0f} s",
             })
 
-out_md, out_csv = ROOT / "results" / "replication_table.md", ROOT / "results" / "replication_table.csv"
+out_md, out_csv = ROOT / "results" / "table1_replication.md", ROOT / "results" / "table1_replication.csv"
 cols = ["experiment", "metric", "ours", "paper", "train_time"]
 with open(out_csv, "w", newline="") as f:
     w = csv.DictWriter(f, cols)
     w.writeheader()
     w.writerows(rows)
-lines = ["| " + " | ".join(cols) + " |", "|" + "---|" * len(cols)]
+lines = ["## Table 1. Replication of Misyris et al. (2019): ours vs. the paper", "",
+         "Forward: 40 boundary measurements, 8000 collocation points, L-BFGS; mean ± sd over seeds. "
+         "Identification: clean-data runs of sweep S6.", "",
+         "| " + " | ".join(cols) + " |", "|" + "---|" * len(cols)]
 lines += ["| " + " | ".join(str(r[c]) for c in cols) + " |" for r in rows]
 out_md.write_text("\n".join(lines) + "\n")
 print("\n".join(lines))

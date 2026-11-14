@@ -1,3 +1,7 @@
+## Table 1. Replication of Misyris et al. (2019): ours vs. the paper
+
+Forward: 40 boundary measurements, 8000 collocation points, L-BFGS; mean ± sd over seeds. Identification: clean-data runs of sweep S6.
+
 | experiment | metric | ours | paper | train_time |
 |---|---|---|---|---|
 | Forward, PINN | rel. L2 of δ, full grid | 1.82e-02 ± 1.4e-02 (n=3 seeds) | 1.34e-2 | 1398 s |

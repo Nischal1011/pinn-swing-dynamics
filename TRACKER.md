@@ -38,7 +38,7 @@ Status key: `[x]` done · `[~]` in progress · `[ ]` not started. Fill in an own
 | [x] | Generate the 10 (m, d) identification datasets | Nischal | Latin hypercube, seed 0 (`identification.make_pairs`); 40 trajectories per pair |
 | [x] | Inverse PINN (trainable m, d) | Nischal | 9 of 10 pairs within 2.6%, median 0.5%; pair 2 stuck with seed 0 (fine with seeds 1, 2). ~3 min per run |
 | [x] | Two-stage baseline: data-only fit, then least squares for (m, d) | Nischal | Median 17% error even on clean data; 0 of 10 pairs within 10% for m |
-| [x] | Replication table (results figure/table 2) | Nischal | `scripts/summarize_replication.py` → `results/replication_table.md` |
+| [x] | Replication table (results figure/table 2) | Nischal | `scripts/summarize_replication.py` → `results/table1_replication.md` (Table 1) |
 
 ## Phase 3: Sweep infrastructure (done Oct 18)
 
@@ -64,11 +64,11 @@ Status key: `[x]` done · `[~]` in progress · `[ ]` not started. Fill in an own
 | Status | Task | Owner | Notes |
 |---|---|---|---|
 | [x] | Statistics: bootstrap CIs, Wilcoxon signed-rank tests | Nischal | Final run Nov 14: `results/stats_paired_tests.{csv,md}` |
-| [ ] | Fig/Table 1: model schematic | | Exists in the proposal |
-| [~] | Fig/Table 2: replication table | Nischal | Forward rows done; identification rows come from S6 clean-data runs |
-| [x] | Fig/Table 3: error vs N_u and noise (both regimes) | Nischal | `figures/fig3_error_vs_data_noise.png`, both rows |
-| [~] | Fig/Table 4: error over time beyond t = 10 s | Nischal | Script ready; needs S5 |
-| [~] | Fig/Table 5: identification + λ/N_f ablations + cost | Nischal | Script ready; needs S1, S3, S4, S6 |
+| [x] | Table 1: replication, ours vs. the paper | Nischal | `results/table1_replication.md` (`summarize_replication.py`) |
+| [x] | Fig. 1: error vs N_u and noise (both layouts) | Nischal | `figures/fig1_error_vs_data_noise.png` |
+| [x] | Fig. 2: error over time beyond t = 10 s | Nischal | `figures/fig2_extrapolation.png`; curves in `results/S5_extrapolation_error_by_time.csv` |
+| [x] | Table 2: identification, PINN vs. two-stage across noise | Nischal | `results/table2_identification.md` (median over all runs, matches the slides) |
+| [x] | Table 3: design choices (λ, N_f), error, residual, time | Nischal | `results/table3_design_choices.md` |
 
 ## Phase 6: Presentation and repo (Dec 2 – Dec 8)
 
@@ -77,9 +77,9 @@ Status key: `[x]` done · `[~]` in progress · `[ ]` not started. Fill in an own
 | [~] | Overview animation, scene 1 (rotor swing) | Nischal | `scripts/animate_overview.py` |
 | [x] | Animation scenes 2 (with vs. without physics, extrapolation) and 3 (identifying m, d) | Nischal | Full recordings Nov 14; scene 2: data-only 0.79 vs PINN 0.019 after 10 s; scene 3: PINN 0.6%/1.2% vs two-stage 13%/16% |
 | [ ] | Animation scene 4 (results summary) | | Needs S1/S2 |
-| [~] | Slides | Nischal | PowerPoint v1 built Nov 10: 12 slides + backup, speaker notes, videos embedded (local presentation/build_deck.py, rebuilds from results). Final rebuild after S2 and the final animation render |
-| [ ] | README final: results summary, how to reproduce, limitations | | |
-| [ ] | `scripts/reproduce.sh` end to end | | |
+| [~] | Slides | Nischal | PowerPoint v1 built Nov 10: 12 slides + backup, speaker notes, videos embedded (local presentation/build_deck.py, rebuilds from results). Rebuilt Nov 14: S2, final animations, the five numbered results as Fig. 1–2 and native Tables 1–3, AI disclosure line on the takeaways slide; QA and validate.py passed. Next: rehearse with a timer |
+| [x] | README final: problem, methods, results summary, data, how to reproduce, limitations | Nischal | Nov 14 |
+| [x] | `scripts/reproduce.sh` (fast path from CSVs tested; `--full` re-runs everything) | Nischal | Nov 14 |
 
 ---
 
@@ -97,6 +97,7 @@ Status key: `[x]` done · `[~]` in progress · `[ ]` not started. Fill in an own
 | Nov 7 | Identification pairs must be stable: all 40 trajectories stay below δ = π. Pairs that lose synchronism are a different regime and inflate the noise scale. Effective d range becomes 0.085–0.148 (report as a limitation) |
 | Nov 7 | Sweeps run one at a time (`--workers 1 --min-free-mem 25`) to keep the laptop's RAM safe; queue S6 → S1 → S2, estimated to finish ~Nov 11–13 |
 | Nov 10 | Presentation: 18-min slot = 15 min talk + 3 min Q&A, strictly enforced; no poster. 12 slides planned at 13:40 with ~3.5 min per speaker; the ~30 s of animation fits |
+| Nov 14 | Course README (github.com/ci4ds/piml): exactly five figures and tables combined, in both the slides and the repo; repo due Dec 8 11:59 PM; AI use must be disclosed in submitted work. Chosen five: Table 1 replication, Fig. 1 data size × noise, Fig. 2 extrapolation, Table 2 identification, Table 3 design choices. Animations are explanatory, not counted |
 | Nov 10 | Figure 3 shows median and interquartile range over all 10 seeds, failed runs included (mean over non-failed runs hid the data-only overfitting) |
 | Nov 7 | Identification replication row = S6 clean-data runs (10 pairs × 3 seeds) |
 
