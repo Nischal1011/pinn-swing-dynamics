@@ -77,7 +77,7 @@ Status key: `[x]` done · `[~]` in progress · `[ ]` not started. Fill in an own
 | [~] | Overview animation, scene 1 (rotor swing) | Nischal | `scripts/animate_overview.py` |
 | [x] | Animation scenes 2 (with vs. without physics, extrapolation) and 3 (identifying m, d) | Nischal | Full recordings Nov 14; scene 2: data-only 0.79 vs PINN 0.019 after 10 s; scene 3: PINN 0.6%/1.2% vs two-stage 13%/16% |
 | [ ] | Animation scene 4 (results summary) | | Needs S1/S2 |
-| [~] | Slides | Nischal | PowerPoint v1 built Nov 10: 12 slides + backup, speaker notes, videos embedded (local presentation/build_deck.py, rebuilds from results). Rebuilt Nov 14: S2, final animations, the five numbered results as Fig. 1–2 and native Tables 1–3, AI disclosure line on the takeaways slide; QA and validate.py passed. Next: rehearse with a timer |
+| [~] | Slides | Nischal | PowerPoint v1 built Nov 10: 12 slides + backup, speaker notes, videos embedded (local presentation/build_deck.py, rebuilds from results). Rebuilt Nov 14: S2, final animations, the five numbered results as Fig. 1–2 and native Tables 1–3; QA and validate.py passed. Next: rehearse with a timer |
 | [x] | README final: problem, methods, results summary, data, how to reproduce, limitations | Nischal | Nov 14 |
 | [x] | `scripts/reproduce.sh` (fast path from CSVs tested; `--full` re-runs everything) | Nischal | Nov 14 |
 
@@ -97,7 +97,7 @@ Status key: `[x]` done · `[~]` in progress · `[ ]` not started. Fill in an own
 | Nov 7 | Identification pairs must be stable: all 40 trajectories stay below δ = π. Pairs that lose synchronism are a different regime and inflate the noise scale. Effective d range becomes 0.085–0.148 (report as a limitation) |
 | Nov 7 | Sweeps run one at a time (`--workers 1 --min-free-mem 25`) to keep the laptop's RAM safe; queue S6 → S1 → S2, estimated to finish ~Nov 11–13 |
 | Nov 10 | Presentation: 18-min slot = 15 min talk + 3 min Q&A, strictly enforced; no poster. 12 slides planned at 13:40 with ~3.5 min per speaker; the ~30 s of animation fits |
-| Nov 14 | Course README (github.com/ci4ds/piml): exactly five figures and tables combined, in both the slides and the repo; repo due Dec 8 11:59 PM; AI use must be disclosed in submitted work. Chosen five: Table 1 replication, Fig. 1 data size × noise, Fig. 2 extrapolation, Table 2 identification, Table 3 design choices. Animations are explanatory, not counted |
+| Nov 14 | Course README (github.com/ci4ds/piml): exactly five figures and tables combined, in both the slides and the repo; repo due Dec 8 11:59 PM; Chosen five: Table 1 replication, Fig. 1 data size × noise, Fig. 2 extrapolation, Table 2 identification, Table 3 design choices. Animations are explanatory, not counted |
 | Nov 10 | Figure 3 shows median and interquartile range over all 10 seeds, failed runs included (mean over non-failed runs hid the data-only overfitting) |
 | Nov 7 | Identification replication row = S6 clean-data runs (10 pairs × 3 seeds) |
 

@@ -119,8 +119,3 @@ and `run_sweep.py --shard i/n` splits a sweep across machines. Single runs:
 - The raw per-run JSON (results/raw/) is not committed because of its size; Fig. 2's per-time curves are kept in
   `results/S5_extrapolation_error_by_time.csv` so the figure rebuilds without it.
 - Runs are deterministic per seed on one machine, but PyTorch and BLAS versions can change the last digits.
-
-## Generative AI disclosure
-
-Claude (Anthropic) was used to read the baseline code, scaffold this repository, and write code and tests.
-All generated code and results are verified by the authors.
