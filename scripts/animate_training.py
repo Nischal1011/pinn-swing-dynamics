@@ -101,12 +101,20 @@ def scene2(seconds=8, hold=2.5):
     save(fig, draw, n_anim + n_hold, FIG / "overview_scene2.mp4")
 
 
+def rolling_median(x, w):
+    pad = np.pad(x, (w // 2, w - 1 - w // 2), mode="edge")
+    return np.median(np.lib.stride_tricks.sliding_window_view(pad, w), axis=1)
+
+
 def scene3(seconds=7, hold=3):
     p, b = np.load(REC / "scene3_pinn.npz"), np.load(REC / "scene3_two_stage.npz")
     steps, m_tr, d_tr = p["trace"].T
     m_true, d_true = float(p["m_true"]), float(p["d_true"])
     err_m = np.abs(m_tr - m_true) / m_true * 100
     err_d = np.abs(d_tr - d_true) / d_true * 100
+    # the trace has one point per loss evaluation, including L-BFGS line-search trials; a rolling median
+    # over 25 evaluations shows the trend instead of the trial-to-trial jitter
+    err_m, err_d, m_tr, d_tr = (rolling_median(x, 25) for x in (err_m, err_d, m_tr, d_tr))
     n_anim, n_hold = int(seconds * FPS), int(hold * FPS)
     step_at = np.geomspace(1, steps[-1], n_anim)
 
@@ -123,8 +131,9 @@ def scene3(seconds=7, hold=3):
     ax.legend(loc="upper right", frameon=False, fontsize=12)
     base = [ax.axhline(v, color=DATA, lw=1.6, ls=ls, alpha=0) for v, ls in
             ((float(b["err_m_pct"]), "-"), (float(b["err_d_pct"]), "--"))]
-    base_txt = ax.text(1.5, max(float(b["err_m_pct"]), float(b["err_d_pct"])) * 1.25, "two-stage baseline (fit, differentiate, least squares)",
-                       color=DATA, fontsize=12, alpha=0)
+    base_txt = ax.text(steps[-1] * 1.3, max(float(b["err_m_pct"]), float(b["err_d_pct"])) * 1.3,
+                       "two-stage baseline\n(fit, differentiate, least squares)",
+                       color=DATA, fontsize=12, alpha=0, ha="right", va="bottom")
 
     readout = fig.add_axes([0.69, 0.17, 0.27, 0.6]); readout.axis("off")
     rows = [readout.text(0, y, "", fontsize=17, color=c, va="top", family="Helvetica Neue")

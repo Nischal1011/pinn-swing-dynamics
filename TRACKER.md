@@ -53,7 +53,7 @@ Status key: `[x]` done · `[~]` in progress · `[ ]` not started. Fill in an own
 | Status | Sweep | Runs | Owner | Notes |
 |---|---|---|---|---|
 | [x] | S1 Data size × noise, boundary sampling | 320 | Nischal | Done Nov 10, 0 errors. PINN beats data-only in all 160 seed-matched pairs (median 7–46× lower error). PINN never above error 1; data-only above 1 in 78/160 runs because it overfits the noise (train MSE ~10× below noise variance), so more noisy data makes it worse |
-| [~] | S2 Data size × noise, interior sampling | 320 | Nischal | Running since Nov 9 20:51, one run at a time; ETA ~Nov 13–14 |
+| [x] | S2 Data size × noise, interior sampling | 320 | Nischal | Done Nov 14, 0 errors. PINN better in 154/160 pairs, median ratio 1.7–8× (smaller gap than boundary sampling: data-only interpolates well when points cover the domain). Data-only error > 1 in 23/160, PINN 0/160 |
 | [x] | S3 Physics weight λ ∈ {0.01, 0.1, 10} | 30 | Nischal | 0 failed. Error falls as λ grows: 7.6e-2 (0.01), 3.2e-2 (0.1), 1.4e-2 (10) |
 | [x] | S4 Collocation N_f ∈ {500, 2000} | 20 | Nischal | 0 failed. 500 and 2000 points give the same error (~2.1e-2); 500 is 2× faster |
 | [x] | S5 Extrapolation (train on t ≤ 10 s) | 30 | Nischal | Physics on t ≤ 20 s: 1.8e-2, error stays flat past 10 s. Physics only on t ≤ 10 s: 0.26 (fine inside the window, diverges after). Data-only: 0.51 (1 failed). Figure 4 |
@@ -63,10 +63,10 @@ Status key: `[x]` done · `[~]` in progress · `[ ]` not started. Fill in an own
 
 | Status | Task | Owner | Notes |
 |---|---|---|---|
-| [~] | Statistics: bootstrap CIs, Wilcoxon signed-rank tests | Nischal | CIs in `aggregate.py`; paired tests in `scripts/stats.py` (tested); final run after S1, S2, S6 |
+| [x] | Statistics: bootstrap CIs, Wilcoxon signed-rank tests | Nischal | Final run Nov 14: `results/stats_paired_tests.{csv,md}` |
 | [ ] | Fig/Table 1: model schematic | | Exists in the proposal |
 | [~] | Fig/Table 2: replication table | Nischal | Forward rows done; identification rows come from S6 clean-data runs |
-| [~] | Fig/Table 3: error vs N_u and noise (both regimes) | Nischal | `scripts/make_figures.py` ready; needs S1, S2 |
+| [x] | Fig/Table 3: error vs N_u and noise (both regimes) | Nischal | `figures/fig3_error_vs_data_noise.png`, both rows |
 | [~] | Fig/Table 4: error over time beyond t = 10 s | Nischal | Script ready; needs S5 |
 | [~] | Fig/Table 5: identification + λ/N_f ablations + cost | Nischal | Script ready; needs S1, S3, S4, S6 |
 
@@ -75,7 +75,7 @@ Status key: `[x]` done · `[~]` in progress · `[ ]` not started. Fill in an own
 | Status | Task | Owner | Notes |
 |---|---|---|---|
 | [~] | Overview animation, scene 1 (rotor swing) | Nischal | `scripts/animate_overview.py` |
-| [~] | Animation scenes 2 (with vs. without physics, extrapolation) and 3 (identifying m, d) | Nischal | Code done and tested (`record_animation_runs.py`, `animate_training.py`); full recording queued to run automatically after S2 |
+| [x] | Animation scenes 2 (with vs. without physics, extrapolation) and 3 (identifying m, d) | Nischal | Full recordings Nov 14; scene 2: data-only 0.79 vs PINN 0.019 after 10 s; scene 3: PINN 0.6%/1.2% vs two-stage 13%/16% |
 | [ ] | Animation scene 4 (results summary) | | Needs S1/S2 |
 | [~] | Slides | Nischal | PowerPoint v1 built Nov 10: 12 slides + backup, speaker notes, videos embedded (local presentation/build_deck.py, rebuilds from results). Final rebuild after S2 and the final animation render |
 | [ ] | README final: results summary, how to reproduce, limitations | | |
